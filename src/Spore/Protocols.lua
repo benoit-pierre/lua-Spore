@@ -23,13 +23,18 @@ math.randomseed(os.time())
 local _ENV = nil
 local m = {}
 
-local r, https = pcall(require, 'ssl.https')
+local r, http, https
+r, http = pcall(require, 'http.compat.socket')  -- lua-http
+if not r then
+    http = nil
+end
+r, https = pcall(require, 'ssl.https')          -- luasec
 if not r then
     https = nil
 end
 local protocol = {
-    http    = require 'socket.http',
-    https   = https,
+    http    = http or require 'socket.http',
+    https   = http or https,
 }
 
 local function slurp (name)
